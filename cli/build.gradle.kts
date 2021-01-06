@@ -4,13 +4,6 @@ plugins {
     id("com.github.johnrengelman.shadow") version "6.1.0"
 }
 
-group = rootProject.group
-version = rootProject.version
-
-base {
-    archivesBaseName = "${rootProject.base.archivesBaseName}-cli"
-}
-
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8

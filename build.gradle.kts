@@ -11,11 +11,21 @@ base {
     archivesBaseName = "ripple"
 }
 
-group = "io.github.juuxel"
-version = "0.2.0"
+allprojects {
+    group = "io.github.juuxel.ripple"
+    version = "0.2.0"
 
-if (file("private.gradle").exists()) {
-    apply(from = "private.gradle")
+    if (rootProject.file("private.gradle").exists()) {
+        apply(from = rootProject.file("private.gradle"))
+    }
+}
+
+subprojects {
+    apply(plugin = "base")
+
+    base {
+        archivesBaseName = "${rootProject.base.archivesBaseName}-${this@subprojects.project.name}"
+    }
 }
 
 java {
