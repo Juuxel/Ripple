@@ -63,7 +63,7 @@ public final class RenameRule implements NameProcessor<RenameRule> {
      * @param from the input string to find
      * @param to   the output string that replaces the input
      */
-    public RenameRule(final String from, final String to) {
+    public RenameRule(String from, String to) {
         this(from, to, false);
     }
 
@@ -74,18 +74,18 @@ public final class RenameRule implements NameProcessor<RenameRule> {
      * @param to     the output string that replaces the input
      * @param exact if true, runs in strict mode
      */
-    public RenameRule(final String from, final String to, final boolean exact) {
+    public RenameRule(String from, String to, boolean exact) {
         this.from = Objects.requireNonNull(from, "from");
         this.to = Objects.requireNonNull(to, "to");
         this.exact = exact;
     }
 
-    private RenameRule(final String[] from, final String[] to, final Function<String[], String> merger, final boolean exact) {
+    private RenameRule(String[] from, String[] to, Function<String[], String> merger, boolean exact) {
         this(merger.apply(from), merger.apply(to), exact);
     }
 
     @Override
-    public String process(final String name, NameType type) {
+    public String process(String name, NameType type) {
         if (exact) {
             if (name.equals(from)) {
                 return to;
@@ -140,9 +140,9 @@ public final class RenameRule implements NameProcessor<RenameRule> {
      * @return the expanded rule variants of this rule
      */
     public Stream<RenameRule> expand() {
-        final RenameRule[] expanded = new RenameRule[3];
-        final String[] fromComponents = from.split(" ");
-        final String[] toComponents = to.split(" ");
+        RenameRule[] expanded = new RenameRule[3];
+        String[] fromComponents = from.split(" ");
+        String[] toComponents = to.split(" ");
 
         // lowerCamelCase
         expanded[0] = new RenameRule(
@@ -186,16 +186,16 @@ public final class RenameRule implements NameProcessor<RenameRule> {
         return result;
     }
 
-    private static String capitalise(final String str) {
+    private static String capitalise(String str) {
         if (str.length() == 1) {
             return str.toUpperCase(Locale.ROOT);
         } else {
-            final int headCodePoint = Character.toUpperCase(str.codePointAt(0));
+            int headCodePoint = Character.toUpperCase(str.codePointAt(0));
             return new String(Character.toChars(headCodePoint)) + str.substring(1);
         }
     }
 
-    private static String[] tail(final String[] parts) {
+    private static String[] tail(String[] parts) {
         return parts.length == 1 ? new String[0] : Arrays.copyOfRange(parts, 1, parts.length);
     }
 

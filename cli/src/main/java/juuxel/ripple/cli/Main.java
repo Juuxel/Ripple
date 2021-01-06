@@ -57,8 +57,8 @@ public final class Main implements Callable<Integer> {
             this.outputFormat = this.inputFormat;
         }
 
-        final @Nullable MappingFormat inputFormat = getMappingFormat(this.inputFormat);
-        final @Nullable MappingFormat outputFormat = getMappingFormat(this.outputFormat);
+        @Nullable MappingFormat inputFormat = getMappingFormat(this.inputFormat);
+        @Nullable MappingFormat outputFormat = getMappingFormat(this.outputFormat);
 
         if (inputFormat == null) {
             printMappingFormats(this.inputFormat);
@@ -82,14 +82,14 @@ public final class Main implements Callable<Integer> {
             nameProcessors = NameProcessorIo.readAll(json).collect(Collectors.toList());
         }
 
-        final MappingSet inputMappings;
-        try (final MappingsReader reader = inputFormat.createReader(input)) {
+        MappingSet inputMappings;
+        try (MappingsReader reader = inputFormat.createReader(input)) {
             inputMappings = reader.read();
         }
 
-        final MappingSet outputMappings = new Ripple(nameProcessors).process(inputMappings);
+        MappingSet outputMappings = new Ripple(nameProcessors).process(inputMappings);
 
-        try (final MappingsWriter writer = outputFormat.createWriter(output)) {
+        try (MappingsWriter writer = outputFormat.createWriter(output)) {
             writer.write(outputMappings);
         }
 
@@ -103,9 +103,9 @@ public final class Main implements Callable<Integer> {
         return 0;
     }
 
-    private static MappingFormat getMappingFormat(final String format) {
+    private static MappingFormat getMappingFormat(String format) {
         if (format.matches("^tiny(v1|v2)?:.+:.+$")) {
-            final String[] parts = format.split(":");
+            String[] parts = format.split(":");
 
             switch (parts[0]) {
                 case "tiny":
@@ -121,12 +121,12 @@ public final class Main implements Callable<Integer> {
         }
     }
 
-    private static void printMappingFormats(final String format) {
+    private static void printMappingFormats(String format) {
         System.err.println("Unknown format: " + format);
         System.err.println("Available formats: tiny:from:to, tinyv1:from:to, tinyv2:from:to, " + String.join(", ", MappingFormats.REGISTRY.keys()));
     }
 
-    public static void main(final String[] args) {
+    public static void main(String[] args) {
         new CommandLine(new Main()).execute(args);
     }
 
@@ -135,7 +135,7 @@ public final class Main implements Callable<Integer> {
         private final String from;
         private final String to;
 
-        TinyMappingFormatWrapper(final TinyMappingFormat format, final String from, final String to) {
+        TinyMappingFormatWrapper(TinyMappingFormat format, String from, String to) {
             this.format = format;
             this.from = from;
             this.to = to;
@@ -143,7 +143,7 @@ public final class Main implements Callable<Integer> {
 
         @Deprecated
         @Override
-        public MappingsReader createReader(final InputStream stream) throws UnsupportedOperationException {
+        public MappingsReader createReader(InputStream stream) throws UnsupportedOperationException {
             throw new UnsupportedOperationException();
         }
 
@@ -153,7 +153,7 @@ public final class Main implements Callable<Integer> {
         }
 
         @Override
-        public MappingsWriter createWriter(final OutputStream stream) {
+        public MappingsWriter createWriter(OutputStream stream) {
             return format.createWriter(new OutputStreamWriter(stream), from, to);
         }
 

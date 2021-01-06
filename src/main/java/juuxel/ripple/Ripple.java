@@ -24,7 +24,7 @@ public final class Ripple {
      *
      * @param nameProcessors the name processors used by this engine
      */
-    public Ripple(final Iterable<? extends NameProcessor<?>> nameProcessors) {
+    public Ripple(Iterable<? extends NameProcessor<?>> nameProcessors) {
         this.nameProcessors = nameProcessors;
     }
 
@@ -35,8 +35,8 @@ public final class Ripple {
      * @param type the type of the name
      * @return the name with all processors applied
      */
-    public String process(String name, final NameType type) {
-        for (final NameProcessor<?> processor : nameProcessors) {
+    public String process(String name, NameType type) {
+        for (NameProcessor<?> processor : nameProcessors) {
             name = processor.process(name, type);
         }
 
@@ -49,25 +49,25 @@ public final class Ripple {
      * @param mappings the input mapping set
      * @return the processed mapping set
      */
-    public MappingSet process(final MappingSet mappings) {
-        final MappingSet result = MappingSet.create();
+    public MappingSet process(MappingSet mappings) {
+        MappingSet result = MappingSet.create();
 
-        for (final TopLevelClassMapping oldClass : mappings.getTopLevelClassMappings()) {
+        for (TopLevelClassMapping oldClass : mappings.getTopLevelClassMappings()) {
             final String className = process(oldClass.getDeobfuscatedName(), NameType.CLASS);
             final TopLevelClassMapping newClass = result.createTopLevelClassMapping(oldClass.getObfuscatedName(), className);
 
-            for (final MethodMapping oldMethod : oldClass.getMethodMappings()) {
-                final String methodName = process(oldMethod.getDeobfuscatedName(), NameType.METHOD);
-                final MethodMapping newMethod = newClass.createMethodMapping(oldMethod.getSignature(), methodName);
+            for (MethodMapping oldMethod : oldClass.getMethodMappings()) {
+                String methodName = process(oldMethod.getDeobfuscatedName(), NameType.METHOD);
+                MethodMapping newMethod = newClass.createMethodMapping(oldMethod.getSignature(), methodName);
 
-                for (final MethodParameterMapping oldParam : oldMethod.getParameterMappings()) {
-                    final String paramName = process(oldParam.getDeobfuscatedName(), NameType.PARAMETER);
+                for (MethodParameterMapping oldParam : oldMethod.getParameterMappings()) {
+                    String paramName = process(oldParam.getDeobfuscatedName(), NameType.PARAMETER);
                     newMethod.createParameterMapping(oldParam.getIndex(), paramName);
                 }
             }
 
-            for (final FieldMapping oldField : oldClass.getFieldMappings()) {
-                final String fieldName = process(oldField.getDeobfuscatedName(), NameType.FIELD);
+            for (FieldMapping oldField : oldClass.getFieldMappings()) {
+                String fieldName = process(oldField.getDeobfuscatedName(), NameType.FIELD);
                 newClass.createFieldMapping(oldField.getSignature(), fieldName);
             }
         }

@@ -50,13 +50,13 @@ public final class FilteredProcessor<P extends NameProcessor<P>> implements Name
      * @param source the source processor
      * @param filter the allowed name types
      */
-    public FilteredProcessor(final P source, final Set<NameType> filter) {
+    public FilteredProcessor(P source, Set<NameType> filter) {
         this.source = Objects.requireNonNull(source, "source");
         this.filter = Objects.requireNonNull(filter, "filter");
     }
 
     @Override
-    public String process(final String name, final NameType type) {
+    public String process(String name, NameType type) {
         if (filter.contains(type)) {
             return source.process(name, type);
         } else {
