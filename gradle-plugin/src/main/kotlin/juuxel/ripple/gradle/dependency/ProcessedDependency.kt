@@ -15,22 +15,25 @@ import java.net.URI
 import java.nio.file.FileSystems
 import java.nio.file.Files
 
-internal class ProcessedDependency(private val extension: RippleExtension, private val parent: Dependency) : ComputedDependency(
+internal class ProcessedDependency(
+    private val extension: RippleExtension,
+    private val parent: Dependency,
+    private val versionName: String
+) : ComputedDependency(
     group = "ripple.processed",
     name = "${parent.group?.replace('.', '-')}-${parent.name}",
-    version = parent.version
+    version = "${parent.version}-$versionName"
 ) {
     override fun contentEquals(other: Dependency) =
         other is ProcessedDependency && parent.contentEquals(other.parent)
 
-    override fun copy(): Dependency = ProcessedDependency(extension, parent.copy())
+    override fun copy(): Dependency = ProcessedDependency(extension, parent.copy(), versionName)
 
     override fun resolve(): Set<File> {
         val source = extension.detachedConfigGetter(parent).singleFile.toPath()
         val target = extension.cache.resolve("$name-$version-processed.jar")
 
         Files.createDirectories(target.parent)
-        // TODO: This check needs to be a *lot* better.
         if (Files.notExists(target)) {
             Files.copy(source, target)
 

@@ -30,7 +30,7 @@ open class RippleExtension {
      * Adds a [processor] to Ripple.
      *
      * If the [processor] parameter is a [NameProcessor], it will be attached directly.
-     * Otherwise, it'll be resolved as a [File] and parsed using [RenameRuleReader].
+     * Otherwise, it'll be resolved as a [File] and parsed using [NameProcessorIo].
      */
     fun processor(processor: Any) {
         if (processor is NameProcessor<*>) {
@@ -42,12 +42,14 @@ open class RippleExtension {
     }
 
     /**
-     * Creates a processed mapping dependency from the [dependencyNotation].
+     * Creates a processed mapping dependency from the [dependencyNotation] with the version [versionName].
+     * The [versionName] should uniquely name the version of the name processors.
      */
-    fun processed(dependencyNotation: String): Dependency = processed(dependencyCreator(dependencyNotation))
+    fun processed(dependencyNotation: String, versionName: String): Dependency = processed(dependencyCreator(dependencyNotation), versionName)
 
     /**
-     * Creates a processed mapping dependency from the [dependency].
+     * Creates a processed mapping dependency from the [dependency] with the version [versionName].
+     * The [versionName] should uniquely name the version of the name processors.
      */
-    fun processed(dependency: Dependency): Dependency = ProcessedDependency(this, dependency)
+    fun processed(dependency: Dependency, versionName: String): Dependency = ProcessedDependency(this, dependency, versionName)
 }
