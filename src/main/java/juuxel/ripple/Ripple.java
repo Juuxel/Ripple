@@ -12,20 +12,19 @@ import org.cadixdev.lorenz.model.FieldMapping;
 import org.cadixdev.lorenz.model.MethodMapping;
 import org.cadixdev.lorenz.model.MethodParameterMapping;
 import org.cadixdev.lorenz.model.TopLevelClassMapping;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * An engine for applying {@linkplain NameProcessor name processors} to deobfuscation mappings.
  */
 public final class Ripple {
-    private final Iterable<? extends NameProcessor> nameProcessors;
+    private final Iterable<? extends NameProcessor<?>> nameProcessors;
 
     /**
      * Constructs a Ripple engine.
      *
      * @param nameProcessors the name processors used by this engine
      */
-    public Ripple(final @NotNull Iterable<? extends NameProcessor> nameProcessors) {
+    public Ripple(final Iterable<? extends NameProcessor<?>> nameProcessors) {
         this.nameProcessors = nameProcessors;
     }
 
@@ -36,8 +35,8 @@ public final class Ripple {
      * @param type the type of the name
      * @return the name with all processors applied
      */
-    public @NotNull String process(@NotNull String name, final @NotNull NameType type) {
-        for (final NameProcessor processor : nameProcessors) {
+    public String process(String name, final NameType type) {
+        for (final NameProcessor<?> processor : nameProcessors) {
             name = processor.process(name, type);
         }
 
@@ -50,7 +49,7 @@ public final class Ripple {
      * @param mappings the input mapping set
      * @return the processed mapping set
      */
-    public @NotNull MappingSet process(final @NotNull MappingSet mappings) {
+    public MappingSet process(final MappingSet mappings) {
         final MappingSet result = MappingSet.create();
 
         for (final TopLevelClassMapping oldClass : mappings.getTopLevelClassMappings()) {

@@ -6,10 +6,10 @@
 
 package juuxel.ripple.cli;
 
+import blue.endless.jankson.*;
 import juuxel.ripple.Ripple;
-import juuxel.ripple.processor.RenameRule;
-import juuxel.ripple.processor.RenameRuleReader;
-import juuxel.ripple.processor.RenameRuleWriter;
+import juuxel.ripple.processor.NameProcessor;
+import juuxel.ripple.processor.NameProcessorIo;
 import net.fabricmc.lorenztiny.TinyMappingFormat;
 import org.cadixdev.lorenz.MappingSet;
 import org.cadixdev.lorenz.io.MappingFormat;
@@ -23,11 +23,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 @CommandLine.Command(name = "ripple", mixinStandardHelpOptions = true)
 public final class Main implements Callable<Integer> {
@@ -72,9 +74,12 @@ public final class Main implements Callable<Integer> {
             return 1;
         }
 
-        List<RenameRule> renameRules;
-        try (final RenameRuleReader reader = new RenameRuleReader(rules)) {
-            renameRules = reader.read();
+        List<? extends NameProcessor<?>> nameProcessors;
+
+        try (InputStream in = Files.newInputStream(rules)) {
+            Jankson jankson = Jankson.builder().build();
+            JsonObject json = jankson.load(in);
+            nameProcessors = NameProcessorIo.readAll(json).collect(Collectors.toList());
         }
 
         final MappingSet inputMappings;
@@ -82,17 +87,17 @@ public final class Main implements Callable<Integer> {
             inputMappings = reader.read();
         }
 
-        final MappingSet outputMappings = new Ripple(renameRules).process(inputMappings);
+        final MappingSet outputMappings = new Ripple(nameProcessors).process(inputMappings);
 
         try (final MappingsWriter writer = outputFormat.createWriter(output)) {
             writer.write(outputMappings);
         }
 
         if (expandedRulesOutput != null) {
-            try (final RenameRuleWriter writer = new RenameRuleWriter(Files.newBufferedWriter(expandedRulesOutput))) {
-                writer.writeHeader();
-                writer.write(renameRules);
-            }
+            Files.write(
+                expandedRulesOutput,
+                NameProcessorIo.toJson(nameProcessors).toJson(true, true).getBytes(StandardCharsets.UTF_8)
+            );
         }
 
         return 0;

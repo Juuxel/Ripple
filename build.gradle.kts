@@ -12,7 +12,7 @@ base {
 }
 
 group = "io.github.juuxel"
-version = "0.1.0"
+version = "0.2.0"
 
 if (file("private.gradle").exists()) {
     apply(from = "private.gradle")
@@ -33,6 +33,7 @@ repositories {
 dependencies {
     api(group = "org.cadixdev", name = "lorenz", version = "0.5.6")
     api(group = "org.jetbrains", name = "annotations", version = "20.1.0")
+    api(group = "blue.endless", name = "jankson", version = "1.2.0")
 }
 
 tasks.jar {

@@ -7,13 +7,13 @@
 package juuxel.ripple.processor;
 
 import juuxel.ripple.NameType;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * A function that modifies identifier names and comments.
+ *
+ * @param <P> the type of this processor
  */
-@FunctionalInterface
-public interface NameProcessor {
+public interface NameProcessor<P extends NameProcessor<P>> {
     /**
      * Processes a single name.
      *
@@ -21,5 +21,13 @@ public interface NameProcessor {
      * @param type the type of the name
      * @return the processed name
      */
-    @NotNull String process(@NotNull String name, @NotNull NameType type);
+    String process(String name, NameType type);
+
+    /**
+     * Gets this processor's codec.
+     *
+     * @return the codec
+     * @since 0.2.0
+     */
+    NameProcessorCodec<P> codec();
 }
