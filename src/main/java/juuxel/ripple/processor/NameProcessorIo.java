@@ -20,6 +20,8 @@ import java.util.stream.Stream;
  * @since 0.2.0
  */
 public final class NameProcessorIo {
+    private static final String PROCESSOR_KEY = "processor";
+    private static final String ALL_PROCESSORS_KEY = "processors";
     private static final Map<Identifier, NameProcessorCodec<?>> CODECS_BY_ID = new HashMap<>();
 
     static {
@@ -48,7 +50,7 @@ public final class NameProcessorIo {
     public static Stream<? extends NameProcessor<?>> readSingle(JsonObject json) {
         Objects.requireNonNull(json, "json");
 
-        Identifier id = new Identifier(json.get(String.class, "id"));
+        Identifier id = new Identifier(json.get(String.class, PROCESSOR_KEY));
         NameProcessorCodec<?> codec = getCodec(id)
             .orElseThrow(() -> new UnsupportedOperationException("Processor type '" + id + "' is not readable"));
 
@@ -62,7 +64,7 @@ public final class NameProcessorIo {
      * @return the read processors
      */
     public static Stream<? extends NameProcessor<?>> readAll(JsonObject json) {
-        return json.get(JsonArray.class, "processors").stream()
+        return json.get(JsonArray.class, ALL_PROCESSORS_KEY).stream()
             .map(entry -> {
                 if (entry instanceof JsonObject) {
                     return (JsonObject) entry;
@@ -84,7 +86,7 @@ public final class NameProcessorIo {
         JsonObject json = new JsonObject();
         NameProcessorCodec codec = processor.codec();
         codec.write(processor, json);
-        json.put("id", codec.getId().toJson());
+        json.put(PROCESSOR_KEY, codec.getId().toJson());
         return json;
     }
 
@@ -101,7 +103,7 @@ public final class NameProcessorIo {
         }
 
         JsonObject json = new JsonObject();
-        json.put("processors", processorArray);
+        json.put(ALL_PROCESSORS_KEY, processorArray);
         return json;
     }
 }

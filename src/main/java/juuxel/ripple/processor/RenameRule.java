@@ -31,7 +31,7 @@ import java.util.stream.Stream;
  *         <th>Value</th>
  *     </tr>
  *     <tr>
- *         <td>{@code id}</td>
+ *         <td>{@code processor}</td>
  *         <td>{@code ripple:rename}</td>
  *     </tr>
  *     <tr>

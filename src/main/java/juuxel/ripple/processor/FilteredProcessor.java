@@ -27,7 +27,7 @@ import java.util.stream.Stream;
  *         <th>Value</th>
  *     </tr>
  *     <tr>
- *         <td>{@code id}</td>
+ *         <td>{@code processor}</td>
  *         <td>{@code ripple:filtered}</td>
  *     </tr>
  *     <tr>
@@ -85,18 +85,14 @@ public final class FilteredProcessor<P extends NameProcessor<P>> implements Name
         @SuppressWarnings("unchecked")
         @Override
         public Stream<FilteredProcessor<P>> read(JsonObject json) {
-            JsonObject sourceJson = json.getObject("source");
-            Identifier sourceId = new Identifier(sourceJson.get(String.class, "id"));
-            NameProcessorCodec<?> sourceCodec = NameProcessorIo.getCodec(sourceId)
-                .orElseThrow(() -> new UnsupportedOperationException("Processor type '" + sourceId + "' is not readable"));
-
             Set<NameType> filter = json.get(JsonArray.class, "filter").stream()
                 .map(it -> (JsonPrimitive) it)
                 .map(JsonPrimitive::asString)
                 .map(NameType::getByName)
                 .collect(Collectors.toSet());
 
-            return sourceCodec.read(sourceJson).map(source -> new FilteredProcessor<>((P) source, filter));
+            JsonObject sourceJson = json.getObject("source");
+            return NameProcessorIo.readSingle(sourceJson).map(source -> new FilteredProcessor<>((P) source, filter));
         }
 
         @Override
