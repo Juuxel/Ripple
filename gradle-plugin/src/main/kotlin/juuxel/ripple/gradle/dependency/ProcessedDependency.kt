@@ -18,16 +18,13 @@ import java.nio.file.Files
 internal class ProcessedDependency(
     private val extension: RippleExtension,
     private val parent: Dependency,
-    private val versionName: String
-) : ComputedDependency(
-    group = "ripple.processed",
-    name = "${parent.group?.replace('.', '-')}-${parent.name}",
-    version = "${parent.version}-$versionName"
-) {
+    private val tag: String,
+    override val spec: DependencySpec
+) : ComputedDependency(), SpecDependency {
     override fun contentEquals(other: Dependency) =
         other is ProcessedDependency && parent.contentEquals(other.parent)
 
-    override fun copy(): Dependency = ProcessedDependency(extension, parent.copy(), versionName)
+    override fun copy(): Dependency = ProcessedDependency(extension, parent.copy(), tag, spec.copy())
 
     override fun resolve(): Set<File> {
         val source = extension.detachedConfigGetter(parent).singleFile.toPath()

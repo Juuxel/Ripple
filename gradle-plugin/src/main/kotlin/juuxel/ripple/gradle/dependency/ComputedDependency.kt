@@ -11,16 +11,8 @@ import org.gradle.api.artifacts.SelfResolvingDependency
 import org.gradle.api.tasks.TaskDependency
 import java.io.File
 
-internal abstract class ComputedDependency(
-    private val group: String?,
-    private val name: String?,
-    private val version: String?
-) : SelfResolvingDependency, FileCollectionDependency {
+internal abstract class ComputedDependency : SelfResolvingDependency, FileCollectionDependency {
     private var reason: String? = null
-
-    override fun getGroup() = group
-    override fun getName() = name
-    override fun getVersion() = version
 
     override fun getReason(): String? = reason
     override fun because(reason: String?) {
