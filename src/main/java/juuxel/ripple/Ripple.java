@@ -14,6 +14,8 @@ import org.cadixdev.lorenz.model.MethodMapping;
 import org.cadixdev.lorenz.model.MethodParameterMapping;
 import org.cadixdev.lorenz.model.TopLevelClassMapping;
 
+import java.util.function.BiFunction;
+
 /**
  * An engine for applying {@linkplain NameProcessor name processors} to deobfuscation mappings.
  */
@@ -54,30 +56,33 @@ public final class Ripple {
         MappingSet result = MappingSet.create();
 
         for (TopLevelClassMapping oldClass : mappings.getTopLevelClassMappings()) {
-            String className = process(oldClass.getDeobfuscatedName(), NameType.CLASS);
-            TopLevelClassMapping newClass = result.createTopLevelClassMapping(oldClass.getObfuscatedName(), className);
-
-            for (ClassMapping<?, ?> oldInnerClass : oldClass.getInnerClassMappings()) {
-                String innerClassName = process(oldInnerClass.getDeobfuscatedName(), NameType.CLASS);
-                newClass.createInnerClassMapping(oldInnerClass.getObfuscatedName(), innerClassName);
-            }
-
-            for (MethodMapping oldMethod : oldClass.getMethodMappings()) {
-                String methodName = process(oldMethod.getDeobfuscatedName(), NameType.METHOD);
-                MethodMapping newMethod = newClass.createMethodMapping(oldMethod.getSignature(), methodName);
-
-                for (MethodParameterMapping oldParam : oldMethod.getParameterMappings()) {
-                    String paramName = process(oldParam.getDeobfuscatedName(), NameType.PARAMETER);
-                    newMethod.createParameterMapping(oldParam.getIndex(), paramName);
-                }
-            }
-
-            for (FieldMapping oldField : oldClass.getFieldMappings()) {
-                String fieldName = process(oldField.getDeobfuscatedName(), NameType.FIELD);
-                newClass.createFieldMapping(oldField.getSignature(), fieldName);
-            }
+            processClass(oldClass, result::createTopLevelClassMapping);
         }
 
         return result;
+    }
+
+    private void processClass(ClassMapping<?, ?> oldClass, BiFunction<String, String, ClassMapping<?, ?>> newClassCreator) {
+        String className = process(oldClass.getDeobfuscatedName(), NameType.CLASS);
+        ClassMapping<?, ?> newClass = newClassCreator.apply(oldClass.getObfuscatedName(), className);
+
+        for (ClassMapping<?, ?> oldInnerClass : oldClass.getInnerClassMappings()) {
+            processClass(oldInnerClass, newClass::createInnerClassMapping);
+        }
+
+        for (MethodMapping oldMethod : oldClass.getMethodMappings()) {
+            String methodName = process(oldMethod.getDeobfuscatedName(), NameType.METHOD);
+            MethodMapping newMethod = newClass.createMethodMapping(oldMethod.getSignature(), methodName);
+
+            for (MethodParameterMapping oldParam : oldMethod.getParameterMappings()) {
+                String paramName = process(oldParam.getDeobfuscatedName(), NameType.PARAMETER);
+                newMethod.createParameterMapping(oldParam.getIndex(), paramName);
+            }
+        }
+
+        for (FieldMapping oldField : oldClass.getFieldMappings()) {
+            String fieldName = process(oldField.getDeobfuscatedName(), NameType.FIELD);
+            newClass.createFieldMapping(oldField.getSignature(), fieldName);
+        }
     }
 }
