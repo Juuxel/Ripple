@@ -8,6 +8,7 @@ package juuxel.ripple;
 
 import juuxel.ripple.processor.NameProcessor;
 import org.cadixdev.lorenz.MappingSet;
+import org.cadixdev.lorenz.model.ClassMapping;
 import org.cadixdev.lorenz.model.FieldMapping;
 import org.cadixdev.lorenz.model.MethodMapping;
 import org.cadixdev.lorenz.model.MethodParameterMapping;
@@ -53,8 +54,13 @@ public final class Ripple {
         MappingSet result = MappingSet.create();
 
         for (TopLevelClassMapping oldClass : mappings.getTopLevelClassMappings()) {
-            final String className = process(oldClass.getDeobfuscatedName(), NameType.CLASS);
-            final TopLevelClassMapping newClass = result.createTopLevelClassMapping(oldClass.getObfuscatedName(), className);
+            String className = process(oldClass.getDeobfuscatedName(), NameType.CLASS);
+            TopLevelClassMapping newClass = result.createTopLevelClassMapping(oldClass.getObfuscatedName(), className);
+
+            for (ClassMapping<?, ?> oldInnerClass : oldClass.getInnerClassMappings()) {
+                String innerClassName = process(oldInnerClass.getDeobfuscatedName(), NameType.CLASS);
+                newClass.createInnerClassMapping(oldInnerClass.getObfuscatedName(), innerClassName);
+            }
 
             for (MethodMapping oldMethod : oldClass.getMethodMappings()) {
                 String methodName = process(oldMethod.getDeobfuscatedName(), NameType.METHOD);
