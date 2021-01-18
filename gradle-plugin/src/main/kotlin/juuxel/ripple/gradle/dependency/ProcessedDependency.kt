@@ -48,6 +48,4 @@ internal class ProcessedDependency(
 
         return setOf(target.toFile())
     }
-
-    override fun getFiles() = extension.fileCollectionGetter(resolve())
 }
