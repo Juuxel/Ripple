@@ -10,6 +10,7 @@ import juuxel.ripple.Ripple
 import juuxel.ripple.gradle.RippleExtension
 import net.fabricmc.lorenztiny.TinyMappingFormat
 import org.gradle.api.artifacts.Dependency
+import org.gradle.api.file.FileCollection
 import java.io.File
 import java.net.URI
 import java.nio.file.FileSystems
@@ -48,4 +49,6 @@ internal class ProcessedDependency(
 
         return setOf(target.toFile())
     }
+
+    override fun getFiles(): FileCollection = extension.fileCollectionGetter(resolve())
 }

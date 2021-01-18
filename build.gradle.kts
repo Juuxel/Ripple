@@ -13,7 +13,7 @@ base {
 
 allprojects {
     group = "io.github.juuxel.ripple"
-    version = "0.3.4"
+    version = "0.3.5"
 
     if (rootProject.file("private.gradle").exists()) {
         apply(from = rootProject.file("private.gradle"))

@@ -6,13 +6,17 @@
 
 package juuxel.ripple.gradle.dependency
 
+import org.gradle.api.artifacts.FileCollectionDependency
 import org.gradle.api.artifacts.SelfResolvingDependency
 import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.api.internal.artifacts.dependencies.SelfResolvingDependencyInternal
 import org.gradle.api.tasks.TaskDependency
 import java.io.File
 
-internal abstract class ComputedDependency : SelfResolvingDependency, SelfResolvingDependencyInternal {
+internal abstract class ComputedDependency :
+    SelfResolvingDependency,
+    SelfResolvingDependencyInternal,
+    FileCollectionDependency {
     private var reason: String? = null
 
     override fun getReason(): String? = reason
