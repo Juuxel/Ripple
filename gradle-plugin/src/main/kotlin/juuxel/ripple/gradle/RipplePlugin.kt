@@ -15,7 +15,7 @@ class RipplePlugin : Plugin<Project> {
         extension.detachedConfigGetter = {
             target.configurations.detachedConfiguration(it)
         }
-        extension.cache = target.projectDir.toPath().resolve(".gradle").resolve("ripple-cache")
+        extension.cache = target.gradle.gradleUserHomeDir.toPath().resolve(".gradle").resolve("ripple-cache")
         extension.fileCollectionGetter = { target.files(it) }
         extension.fileResolver = target::file
         extension.dependencyCreator = { target.dependencies.create(it) }

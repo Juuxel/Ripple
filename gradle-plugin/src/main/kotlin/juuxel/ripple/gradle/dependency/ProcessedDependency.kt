@@ -28,9 +28,11 @@ internal class ProcessedDependency(
 
     override fun resolve(): Set<File> {
         val source = extension.detachedConfigGetter(parent).singleFile.toPath()
-        val target = extension.cache.resolve("$name-$version-processed.jar")
+        val tree = group.split('.') + name + version
+        val versionDirectory = extension.cache.resolve(tree.joinToString(separator = File.separator))
+        val target = versionDirectory.resolve("$name-$version.jar")
 
-        Files.createDirectories(target.parent)
+        Files.createDirectories(versionDirectory)
         if (Files.notExists(target)) {
             Files.copy(source, target)
 
