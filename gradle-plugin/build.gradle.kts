@@ -1,13 +1,10 @@
 import com.jfrog.bintray.gradle.BintrayExtension
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     `java-library`
-    kotlin("jvm") version "1.3.72"
     `java-gradle-plugin`
     `maven-publish`
     id("org.cadixdev.licenser")
-    id("org.jmailen.kotlinter") version "3.3.0"
     id("com.jfrog.bintray")
 }
 
@@ -28,17 +25,11 @@ repositories {
 }
 
 dependencies {
-    implementation(kotlin("stdlib-jdk8"))
-
     api(project(":"))
     implementation("net.fabricmc", "lorenz-tiny", "3.0.0")
 }
 
 tasks {
-    withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = "1.8"
-    }
-
     jar {
         from(rootProject.file("LICENSE"))
     }
