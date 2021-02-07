@@ -50,10 +50,10 @@ Finally, the dependency can be declared like this:
 
 ```kotlin
 dependencies {
-    // The version tag passed to ripple.processed needs to be unique for your name processors.
+    // The version tag passed to ripple.process needs to be unique for your name processors.
     // There will be invalid global files otherwise.
     // I recommend using either your name or your mod's name.
-    mappings(ripple.processed("net.fabricmc:yarn:whatever_version", "<your version tag>"))
+    mappings(ripple.process("net.fabricmc:yarn:whatever_version", "<your version tag>"))
 }
 ```
 
