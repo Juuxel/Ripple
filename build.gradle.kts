@@ -24,30 +24,48 @@ allprojects {
 
     afterEvaluate {
         if (plugins.hasPlugin("maven-publish")) {
-            publishing.publications.withType<MavenPublication> {
-                pom {
-                    name.set(base.archivesBaseName)
-                    url.set("https://github.com/Juuxel/Ripple")
-
-                    licenses {
-                        license {
-                            name.set("Mozilla Public License Version 2.0")
-                            url.set("https://www.mozilla.org/en-US/MPL/2.0/")
-                        }
-                    }
-
-                    developers {
-                        developer {
-                            id.set("Juuxel")
-                            name.set("Juuxel")
-                            email.set("juuzsmods@gmail.com")
-                        }
-                    }
-
-                    scm {
-                        connection.set("scm:git:git://github.com/Juuxel/Ripple.git")
-                        developerConnection.set("scm:git:ssh://github.com:Juuxel/Ripple.git")
+            publishing {
+                publications.withType<MavenPublication> {
+                    pom {
+                        name.set(base.archivesBaseName)
                         url.set("https://github.com/Juuxel/Ripple")
+
+                        licenses {
+                            license {
+                                name.set("Mozilla Public License Version 2.0")
+                                url.set("https://www.mozilla.org/en-US/MPL/2.0/")
+                            }
+                        }
+
+                        developers {
+                            developer {
+                                id.set("Juuxel")
+                                name.set("Juuxel")
+                                email.set("juuzsmods@gmail.com")
+                            }
+                        }
+
+                        scm {
+                            connection.set("scm:git:git://github.com/Juuxel/Ripple.git")
+                            developerConnection.set("scm:git:ssh://github.com:Juuxel/Ripple.git")
+                            url.set("https://github.com/Juuxel/Ripple")
+                        }
+                    }
+                }
+
+                repositories {
+                    if (project.hasProperty("artifactoryUsername")) {
+                        maven {
+                            name = "Cotton"
+                            url = uri("https://server.bbkr.space/artifactory/libs-release")
+
+                            credentials {
+                                username = project.property("artifactoryUsername").toString()
+                                password = project.property("artifactoryPassword").toString()
+                            }
+                        }
+                    } else {
+                        println("Cannot configure artifactory; please define ext.artifactoryUsername and ext.artifactoryPassword before running artifactoryPublish")
                     }
                 }
             }

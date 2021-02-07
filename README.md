@@ -20,7 +20,7 @@ if you have JDK 8 or newer by running `./gradlew build`. The CLI files will be i
 Ripple also has a Gradle plugin for Minecraft modding, intended to be used with [Fabric Loom](https://github.com/FabricMC/fabric-loom)
 or one of its forks. It processes mapping dependencies that contain a Tiny mappings file at `mappings/mappings.tiny`.
 
-To use the Ripple plugin, you need to add my Maven repository to the `pluginManagement` repositories in settings.gradle(.kts):
+To use the Ripple plugin, you need to add the Cotton repository to the `pluginManagement` repositories in settings.gradle(.kts):
 
 > This code should work for both Groovy and Kotlin buildscripts.
 
@@ -29,8 +29,8 @@ pluginManagement {
     repositories {
         // ... other repos here
         maven {
-            name = "JuuxelBintray"
-            url = uri("https://dl.bintray.com/juuxel/maven")
+            name = "Cotton"
+            url = uri("https://server.bbkr.space/artifactory/libs-release")
         }
     }
 }
