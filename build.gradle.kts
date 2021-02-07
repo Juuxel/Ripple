@@ -3,6 +3,7 @@ import com.jfrog.bintray.gradle.BintrayExtension
 plugins {
     `java-library`
     `maven-publish`
+    signing
     id("org.cadixdev.licenser") version "0.5.0"
     id("com.jfrog.bintray") version "1.8.5"
 }
@@ -12,11 +13,51 @@ base {
 }
 
 allprojects {
+    apply(plugin = "signing")
+
     group = "io.github.juuxel.ripple"
-    version = "0.4.0"
+    version = "0.4.1"
 
     if (rootProject.file("private.gradle").exists()) {
         apply(from = rootProject.file("private.gradle"))
+    }
+
+    afterEvaluate {
+        if (plugins.hasPlugin("maven-publish")) {
+            publishing.publications.withType<MavenPublication> {
+                pom {
+                    name.set(base.archivesBaseName)
+                    url.set("https://github.com/Juuxel/Ripple")
+
+                    licenses {
+                        license {
+                            name.set("Mozilla Public License Version 2.0")
+                            url.set("https://www.mozilla.org/en-US/MPL/2.0/")
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id.set("Juuxel")
+                            name.set("Juuxel")
+                            email.set("juuzsmods@gmail.com")
+                        }
+                    }
+
+                    scm {
+                        connection.set("scm:git:git://github.com/Juuxel/Ripple.git")
+                        developerConnection.set("scm:git:ssh://github.com:Juuxel/Ripple.git")
+                        url.set("https://github.com/Juuxel/Ripple")
+                    }
+                }
+            }
+
+            if (project.hasProperty("signing.keyId")) {
+                signing {
+                    sign(publishing.publications)
+                }
+            }
+        }
     }
 }
 
@@ -58,7 +99,11 @@ publishing {
     publications.create<MavenPublication>("maven") {
         artifactId = "ripple"
 
-        from(components.getByName("java"))
+        from(components["java"])
+
+        pom {
+            description.set("A processor library for deobfuscation mappings.")
+        }
     }
 }
 
