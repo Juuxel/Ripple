@@ -1,7 +1,7 @@
 plugins {
     java
     id("org.cadixdev.licenser")
-    id("com.github.johnrengelman.shadow") version "6.1.0"
+    id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
 java {
@@ -35,5 +35,5 @@ tasks.assemble {
 }
 
 license {
-    header = rootProject.file("HEADER.txt")
+    header(rootProject.file("HEADER.txt"))
 }
